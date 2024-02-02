@@ -67,7 +67,7 @@ class _LoginPage extends State<LoginPage> {
                               onChanged: (value) => _password = value.toString(),
                               decoration: InputDecoration(labelText: 'Password'),
                               validator: (value) => stringNotEmptyValidator(
-                                  value, 'Please enter a Login'),
+                                  value, 'Please enter a Password'),
                               obscureText: true)),
                       if (processLogin)
                         FutureBuilder(

@@ -17,19 +17,19 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
-  late String _username;
   late String _login;
   late String _password;
-  String? _usernameError;
+  String? _loginError;
   var processSignin = false;
 
   _signin() async {
-    _usernameError = null;
+    if (!_formKey.currentState!.validate()) return;
+    _loginError = null;
     try {
       final exists = await widget.userRoutes.get(_login);
       if (exists) {
         setState(() {
-          _usernameError = 'Login already in use';
+          _loginError = 'Login already in use';
         });
         return;
       }
