@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:projet_frontend/model/user_account.dart';
+import 'package:projet_frontend/models/user_account.dart';
+import 'package:projet_frontend/models/authentication_result.dart';
+import 'package:projet_frontend/models/list_animes.dart';
+import 'package:projet_frontend/services/login_state.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-
-import '../model/authentication_result.dart';
-import '../model/car.dart';
-import 'login_state.dart';
 
 class StatusErrorException {
   final int _statusCode;
@@ -16,25 +16,25 @@ class StatusErrorException {
   get statusCode => _statusCode;
 }
 
-class CarAPI {
-  static const apiServer = '10.0.2.2:3333';
+class AnimeListAPI {
+  static const apiServer = '192.168.2.101:3333';
   static const apiUrl = '';
 }
 
-class UserAccountRoutes extends CarAPI {
-  static const userAccountRoutes = '${CarAPI.apiUrl}/useraccount';
+class UserAccountRoutes extends AnimeListAPI {
+  static const userAccountRoutes = '${AnimeListAPI.apiUrl}/useraccount';
   static const authRoutes = '$userAccountRoutes/authenticate';
 
   Future insert(UserAccount userAccount) async {
     var result = await http.post(
-        Uri.http(CarAPI.apiServer, '$userAccountRoutes'),
+        Uri.http(AnimeListAPI.apiServer, '$userAccountRoutes'),
         body: userAccount.toMap());
     if (result.statusCode != 200) throw StatusErrorException(result.statusCode);
   }
 
   Future get(String login) async {
-    var result =
-    await http.get(Uri.http(CarAPI.apiServer, '$userAccountRoutes/$login'));
+    var result = await http
+        .get(Uri.http(AnimeListAPI.apiServer, '$userAccountRoutes/$login'));
     if (result.statusCode == 200)
       return true;
     else
@@ -43,7 +43,7 @@ class UserAccountRoutes extends CarAPI {
 
   Future<AuthenticationResult> authenticate(
       String login, String password) async {
-    var result = await http.post(Uri.http(CarAPI.apiServer, authRoutes),
+    var result = await http.post(Uri.http(AnimeListAPI.apiServer, authRoutes),
         body: {'login': login, 'password': password});
     if (result.statusCode != 200) throw StatusErrorException(result.statusCode);
     final Map<String, dynamic> datas = jsonDecode(result.body);
@@ -53,7 +53,7 @@ class UserAccountRoutes extends CarAPI {
   Future<String> refreshToken(context) async {
     var token = Provider.of<LoginState>(context, listen: false).token;
     var result = await http.get(
-        Uri.http(CarAPI.apiServer, '$userAccountRoutes/refreshtoken'),
+        Uri.http(AnimeListAPI.apiServer, '$userAccountRoutes/refreshtoken'),
         headers: {'Authorization': 'Bearer $token'});
     if (result.statusCode == 200)
       return jsonDecode(result.body)["token"];
@@ -62,25 +62,26 @@ class UserAccountRoutes extends CarAPI {
   }
 }
 
-class CarRoutes extends CarAPI {
-  static const carRoutes = '${CarAPI.apiUrl}/car';
+class AnimeRoutes extends AnimeListAPI {
+  static const animeRoutes = '${AnimeListAPI.apiUrl}/anime.dart';
   var userRoutes = UserAccountRoutes();
 
-  Future<List<Car>> get(context) async {
-    List<Car> cars = [];
+  Future<List<ListAnimes>> get(context) async {
+    List<ListAnimes> listsAnimes = [];
 
     try {
       var value = await userRoutes.refreshToken(context);
       Provider.of<LoginState>(context, listen: false).token = value;
 
       //var token = Provider.of<LoginState>(context, listen: false).token;
-      var result = await http.get(Uri.http(CarAPI.apiServer, '$carRoutes'),
+      var result = await http.get(
+          Uri.http(AnimeListAPI.apiServer, '$animeRoutes'),
           headers: {'Authorization': 'Bearer $value'});
       if (result.statusCode == 200) {
         var datas = jsonDecode(result.body);
         for (var data in datas) {
-          var car = Car.fromMap(data);
-          cars.add(car);
+          var listAnimes = ListAnimes.fromMap(data);
+          listsAnimes.add(listAnimes);
         }
       }
     } on StatusErrorException catch (error) {
@@ -88,12 +89,12 @@ class CarRoutes extends CarAPI {
         Provider.of<LoginState>(context, listen: false).disconnect();
     }
     ;
-    return cars;
+    return listsAnimes;
   }
 
-  Future insert(Car car, context) async {
+  Future insert(ListAnimes anime, context) async {
     var token = Provider.of<LoginState>(context, listen: false).token;
-    await http.post(Uri.http(CarAPI.apiServer, carRoutes),
-        headers: {'Authorization': 'Bearer $token'}, body: car);
+    await http.post(Uri.http(AnimeListAPI.apiServer, animeRoutes),
+        headers: {'Authorization': 'Bearer $token'}, body: anime);
   }
 }

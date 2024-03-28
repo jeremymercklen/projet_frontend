@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projet_frontend/consts.dart';
 
 class MySizedBox extends SizedBox {
   MySizedBox({super.key, required super.child}) : super(width: double.infinity);
@@ -19,6 +20,10 @@ String? stringNotEmptyValidator(value, message) {
 
 class MyText extends Text {
   const MyText(super.data, {super.key});
+}
+
+class MyPadding extends Padding {
+  const MyPadding({super.key, required super.child}): super(padding: defaultPadding);
 }
 
 showNetworkErrorDialog(context, {message}) => showDialog(

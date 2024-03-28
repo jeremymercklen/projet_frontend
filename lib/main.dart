@@ -1,12 +1,15 @@
 import 'package:projet_frontend/components.dart';
 import 'package:projet_frontend/pages/login_page.dart';
-import 'package:projet_frontend/services/car_api.dart';
+import 'package:projet_frontend/pages/page_anime.dart';
+import 'package:projet_frontend/services/anime_api.dart';
+import 'package:projet_frontend/services/list_anime_api.dart';
 import 'package:projet_frontend/services/login_state.dart';
 import 'package:projet_frontend/widgets/drawer.dart';
+import 'package:projet_frontend/models/list_animes.dart';
+import 'package:projet_frontend/models/anime.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'model/car.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -19,13 +22,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Cars',
+        title: 'Anime',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
         home: Consumer<LoginState>(builder: (context, loginState, child) {
-          return loginState.connected ? MyHomePage(title: 'Cars') : LoginPage();
+          return loginState.connected
+              ? MyHomePage(title: 'Anime')
+              : LoginPage();
         }));
   }
 }
@@ -34,7 +39,8 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
 
   final String title;
-  final carRoutes = CarRoutes();
+  var animeAPI = AnimeAPI();
+  final animeRoutes = AnimeRoutes();
   final userRoutes = UserAccountRoutes();
 
   @override
@@ -42,11 +48,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<List<Car>> _cars;
+  late Future<List<Datum>> _anime;
 
   @override
   Widget build(BuildContext context) {
-    _cars = widget.carRoutes.get(context);
+    _anime = widget.animeAPI.animes('action');
 
     return Scaffold(
         appBar: AppBar(
@@ -54,25 +60,65 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         drawer: const MyDrawer(),
-        body: Center(
-            child: Column(children: [
-              Expanded(
-                  child: FutureBuilder(
-                      future: _cars,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final data = snapshot.data;
-                          return ListView.builder(
-                              itemCount: data!.length,
-                              itemBuilder: (context, index) =>
-                                  Card(child: Text(data.elementAt(index).model)));
-                        }
-                        return Container();
-                      })),
-              MySizedBox(
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text('Add car')))
-            ])));
+        body: Column(children: [
+          Align(alignment: Alignment.topLeft, child: MyText('Action :')),
+          SizedBox(
+              height: 220,
+              child: FutureBuilder(
+                  future: _anime,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data;
+                      return ListView.builder(
+                          itemCount: data!.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => PageAnime(
+                                        anime: data.elementAt(index))));
+                              },
+                              child: Card(
+                                  child: Column(
+                                children: [
+                                  (data
+                                              .elementAt(index)
+                                              .attributes
+                                              .posterImage !=
+                                          null
+                                      ? MyPadding(
+                                          child: Image.network(
+                                              data
+                                                  .elementAt(index)
+                                                  .attributes
+                                                  .posterImage!
+                                                  .tiny,
+                                              loadingBuilder:
+                                                  (BuildContext context,
+                                                      Widget child,
+                                                      ImageChunkEvent?
+                                                          loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }))
+                                      : Container()),
+                                  MyPadding(
+                                      child: MyText(data
+                                          .elementAt(index)
+                                          .attributes
+                                          .titles
+                                          .enJp))
+                                ],
+                              ))));
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
+                    return Container();
+                  }))
+        ]));
   }
 }

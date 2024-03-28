@@ -1,4 +1,5 @@
-import 'package:projet_frontend/model/user_account.dart';
+import 'package:projet_frontend/models/user_account.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

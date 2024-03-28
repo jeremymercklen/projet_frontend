@@ -13,10 +13,10 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
         child: ListView(padding: EdgeInsets.zero, children: [
-      const DrawerHeader(child: Text('Cars')),
+      const DrawerHeader(child: Text('Anime')),
       ListTile(
         leading: const Icon(Icons.home),
-        title: const Text("List of cars"),
+        title: const Text("List of anime"),
         onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => MyHomePage(title: ''))),
       ),

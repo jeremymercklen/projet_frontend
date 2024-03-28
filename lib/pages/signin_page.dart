@@ -1,10 +1,10 @@
 import 'package:projet_frontend/components.dart';
+import 'package:projet_frontend/models/user_account.dart';
+import 'package:projet_frontend/services/list_anime_api.dart';
+import 'package:projet_frontend/pages/login_page.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../model/user_account.dart';
-import '../services/car_api.dart';
-import 'login_page.dart';
 
 class SigninPage extends StatefulWidget {
   SigninPage({super.key});
@@ -40,8 +40,8 @@ class _SigninPageState extends State<SigninPage> {
         setState(() {
           processSignin = true;
         });
-        await widget.userRoutes.insert(UserAccount(
-            login: _login, password: _password));
+        await widget.userRoutes
+            .insert(UserAccount(login: _login, password: _password));
         if (context.mounted) {
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => LoginPage()));
@@ -80,7 +80,7 @@ class _SigninPageState extends State<SigninPage> {
                 MySizedBox(
                     child: TextFormField(
                         decoration:
-                        InputDecoration(labelText: 'Repeat password'),
+                            InputDecoration(labelText: 'Repeat password'),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
