@@ -1,4 +1,5 @@
 import 'package:projet_frontend/components.dart';
+import 'package:projet_frontend/consts.dart';
 import 'package:projet_frontend/pages/login_page.dart';
 import 'package:projet_frontend/pages/page_anime.dart';
 import 'package:projet_frontend/services/anime_api.dart';
@@ -48,77 +49,98 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<String> _response;
   late Future<List<Datum>> _anime;
 
   @override
   Widget build(BuildContext context) {
+    _response = widget.userRoutes.refreshToken(context);
     _anime = widget.animeAPI.animes('action');
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          backgroundColor: Theme
+              .of(context)
+              .colorScheme
+              .inversePrimary,
           title: Text(widget.title),
         ),
         drawer: const MyDrawer(),
-        body: Column(children: [
-          Align(alignment: Alignment.topLeft, child: MyText('Action :')),
-          SizedBox(
-              height: 220,
-              child: FutureBuilder(
-                  future: _anime,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final data = snapshot.data;
-                      return ListView.builder(
-                          itemCount: data!.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => PageAnime(
-                                        anime: data.elementAt(index))));
-                              },
-                              child: Card(
-                                  child: Column(
-                                children: [
-                                  (data
-                                              .elementAt(index)
-                                              .attributes
-                                              .posterImage !=
-                                          null
-                                      ? MyPadding(
-                                          child: Image.network(
-                                              data
-                                                  .elementAt(index)
-                                                  .attributes
-                                                  .posterImage!
-                                                  .tiny,
-                                              loadingBuilder:
-                                                  (BuildContext context,
-                                                      Widget child,
-                                                      ImageChunkEvent?
-                                                          loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }))
-                                      : Container()),
-                                  MyPadding(
-                                      child: MyText(data
-                                          .elementAt(index)
-                                          .attributes
-                                          .titles
-                                          .enJp))
-                                ],
-                              ))));
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    }
-                    return Container();
-                  }))
-        ]));
+        body: FutureBuilder(
+            future: _response,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Provider.of<LoginState>(context, listen: false).token = snapshot.data!;
+                return Column(children: [
+                  Align(
+                      alignment: Alignment.topLeft, child: MyText('Action :')),
+                  SizedBox(
+                      height: 220,
+                      child: FutureBuilder(
+                          future: _anime,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final data = snapshot.data;
+                              return ListView.builder(
+                                  itemCount: data!.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PageAnime(
+                                                            anime: data
+                                                                .elementAt(
+                                                                index))));
+                                          },
+                                          child: Card(
+                                              child: Column(
+                                                children: [
+                                                  (data
+                                                      .elementAt(index)
+                                                      .attributes
+                                                      .posterImage !=
+                                                      null
+                                                      ? MyPadding(
+                                                      child: Image.network(
+                                                          data
+                                                              .elementAt(index)
+                                                              .attributes
+                                                              .posterImage!
+                                                              .tiny,
+                                                          loadingBuilder:
+                                                              (
+                                                              BuildContext context,
+                                                              Widget child,
+                                                              ImageChunkEvent?
+                                                              loadingProgress) {
+                                                            if (loadingProgress ==
+                                                                null) {
+                                                              return child;
+                                                            }
+                                                            return Center(
+                                                                child:
+                                                                CircularProgressIndicator());
+                                                          }))
+                                                      : Container()),
+                                                  MyPadding(
+                                                      child: MyText(data
+                                                          .elementAt(index)
+                                                          .attributes
+                                                          .titles
+                                                          .enJp))
+                                                ],
+                                              ))));
+                            } else if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            }
+                            return Container();
+                          }))
+                ]);
+              }
+              return LoginPage();
+            }));
   }
 }

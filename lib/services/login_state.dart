@@ -1,6 +1,5 @@
 import 'package:projet_frontend/models/user_account.dart';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginState extends ChangeNotifier {
@@ -20,22 +19,20 @@ class LoginState extends ChangeNotifier {
   }
 
   bool get connected => _user != null;
+  UserAccount get user => _user!;
+  String get token => _token!;
 
-  get user => _user;
-
-  get token => _token;
-
-  set user(user) {
-    _user = user;
+  set token(String value) {
+    _token = value;
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setString("login", _user!.login);
+      prefs.setString("token", _token!);
     });
   }
 
-  set token(token) {
-    _token = token;
+  set user(UserAccount value) {
+    _user = value;
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setString("token", _token!);
+      prefs.setString("login", _user!.login);
     });
   }
 
@@ -48,4 +45,5 @@ class LoginState extends ChangeNotifier {
     _token = null;
     notifyListeners();
   }
+
 }

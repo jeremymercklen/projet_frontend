@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projet_frontend/consts.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -18,7 +19,7 @@ class MyDrawer extends StatelessWidget {
         leading: const Icon(Icons.home),
         title: const Text("List of anime"),
         onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MyHomePage(title: ''))),
+            MaterialPageRoute(builder: (context) => const MyApp())),
       ),
       ListTile(
         leading: const Icon(Icons.logout),

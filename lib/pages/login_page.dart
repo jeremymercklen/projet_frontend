@@ -1,4 +1,5 @@
 import 'package:projet_frontend/components.dart';
+import 'package:projet_frontend/consts.dart';
 import 'package:projet_frontend/pages/signin_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,7 @@ class _LoginPage extends State<LoginPage> {
       Provider.of<LoginState>(context, listen: false).user =
           UserAccount(login: authResult.login);
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MyHomePage(
-                title: 'Anime',
-              )));
+          builder: (context) => const MyApp()));
       return authResult;
     });
     setState(() {
