@@ -1,4 +1,4 @@
-enum AnimeState { planToWatch, watching, finished }
+enum AnimeState { notSeen, planToWatch, watching, finished }
 
 class ListAnimes {
   late var idAPI;
