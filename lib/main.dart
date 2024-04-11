@@ -49,7 +49,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<String> _response;
+  late Future<Map<String, String>> _response;
   late Future<List<Datum>> _anime;
 
   @override
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
             future: _response,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                Provider.of<LoginState>(context, listen: false).token = snapshot.data!;
+                Provider.of<LoginState>(context, listen: false).token = snapshot.data!['token']!;
                 return Column(children: [
                   Align(
                       alignment: Alignment.topLeft, child: MyText('Action :')),
@@ -140,7 +140,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           }))
                 ]);
               }
-              return LoginPage();
+              if (snapshot.hasError) {
+                /*Provider.of<LoginState>(context, listen: false).disconnect();
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LoginPage()));*/
+              }
+              return Center(child: CircularProgressIndicator());
             }));
   }
 }

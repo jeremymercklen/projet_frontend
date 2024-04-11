@@ -50,20 +50,22 @@ class UserAccountRoutes extends AnimeListAPI {
     return AuthenticationResult.fromMap(datas);
   }
 
-  Future<String> refreshToken(context) async {
+  Future<Map<String, String>> refreshToken(context) async {
     var token = Provider.of<LoginState>(context, listen: false).token;
     var result = await http.get(
         Uri.http(AnimeListAPI.apiServer, '$userAccountRoutes/refreshtoken'),
         headers: {'Authorization': 'Bearer $token'});
-    if (result.statusCode == 200)
-      return jsonDecode(result.body)["token"];
+    if (result.statusCode == 200) {
+      Map<String, String> map = { 'id': jsonDecode(result.body)["id"].toString(), 'token': jsonDecode(result.body)["token"] };
+      return map;
+    }
     else
       throw StatusErrorException(result.statusCode);
   }
 }
 
 class AnimeRoutes extends AnimeListAPI {
-  static const animeRoutes = '${AnimeListAPI.apiUrl}/anime.dart';
+  static const animeRoutes = '${AnimeListAPI.apiUrl}/anime';
   var userRoutes = UserAccountRoutes();
 
   Future<List<ListAnimes>> get(context) async {
@@ -71,7 +73,7 @@ class AnimeRoutes extends AnimeListAPI {
 
     try {
       var value = await userRoutes.refreshToken(context);
-      Provider.of<LoginState>(context, listen: false).token = value;
+      Provider.of<LoginState>(context, listen: false).token = value['token']!;
 
       //var token = Provider.of<LoginState>(context, listen: false).token;
       var result = await http.get(
@@ -88,8 +90,33 @@ class AnimeRoutes extends AnimeListAPI {
       if ((error.statusCode == 401))
         Provider.of<LoginState>(context, listen: false).disconnect();
     }
-    ;
     return listsAnimes;
+  }
+
+  Future<ListAnimes?> getByIdAPI(context, id, idAPI) async {
+    ListAnimes listAnimes;
+
+    try {
+      var value = await userRoutes.refreshToken(context);
+      Provider.of<LoginState>(context, listen: false).token = value['token']!;
+
+      //var token = Provider.of<LoginState>(context, listen: false).token;
+      var result = await http.get(
+          Uri.http(AnimeListAPI.apiServer, '$animeRoutes', {
+            'id': id.toString(),
+            'idapi': idAPI.toString()
+          }),
+          headers: {'Authorization': 'Bearer $value'});
+      if (result.statusCode == 200) {
+        var datas = jsonDecode(result.body);
+        listAnimes = datas;
+        return listAnimes;
+      }
+    } on StatusErrorException catch (error) {
+      if ((error.statusCode == 401))
+        Provider.of<LoginState>(context, listen: false).disconnect();
+    }
+    return null;
   }
 
   Future insert(ListAnimes anime, context) async {

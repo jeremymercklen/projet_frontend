@@ -76,26 +76,26 @@ class Attributes {
   Titles titles;
   String canonicalTitle;
   List<String> abbreviatedTitles;
-  String averageRating;
+  String? averageRating;
   Map<String, String> ratingFrequencies;
   int userCount;
   int favoritesCount;
   DateTime startDate;
-  DateTime endDate;
+  DateTime? endDate;
   dynamic nextRelease;
   int popularityRank;
-  int ratingRank;
-  String ageRating;
-  String ageRatingGuide;
+  int? ratingRank;
+  String? ageRating;
+  String? ageRatingGuide;
   String subtype;
   String status;
   dynamic tba;
-  PosterImage posterImage;
+  PosterImage? posterImage;
   CoverImage? coverImage;
   int episodeCount;
   int? episodeLength;
-  int totalLength;
-  String youtubeVideoId;
+  int? totalLength;
+  String? youtubeVideoId;
   String showType;
   bool nsfw;
 
@@ -144,29 +144,30 @@ class Attributes {
         canonicalTitle: json["canonicalTitle"],
         abbreviatedTitles:
             List<String>.from(json["abbreviatedTitles"].map((x) => x)),
-        averageRating: json["averageRating"],
+        averageRating: json["averageRating"] != null ? json["averageRating"] : null,
         ratingFrequencies: Map.from(json["ratingFrequencies"])
             .map((k, v) => MapEntry<String, String>(k, v)),
         userCount: json["userCount"],
         favoritesCount: json["favoritesCount"],
         startDate: DateTime.parse(json["startDate"]),
-        endDate: DateTime.parse(json["endDate"]),
+        endDate:
+            json["endDate"] != null ? DateTime.parse(json["endDate"]) : null,
         nextRelease: json["nextRelease"],
         popularityRank: json["popularityRank"],
-        ratingRank: json["ratingRank"],
-        ageRating: json["ageRating"],
-        ageRatingGuide: json["ageRatingGuide"],
+        ratingRank: json["ratingRank"] != null ? json["ratingRank"] : null,
+        ageRating: json["ageRating"] != null ? json["ageRating"] : null,
+        ageRatingGuide: json["ageRatingGuide"] != null ? json["ageRatingGuide"] : null,
         subtype: json["subtype"],
         status: json["status"],
         tba: json["tba"],
-        posterImage: PosterImage.fromJson(json["posterImage"]),
+        posterImage: json["posterImage"] != null ? PosterImage.fromJson(json["posterImage"]) : null,
         coverImage: json["coverImage"] != null
             ? CoverImage.fromJson(json["coverImage"])
             : null,
         episodeCount: json["episodeCount"],
         episodeLength: json["episodeLength"],
-        totalLength: json["totalLength"],
-        youtubeVideoId: json["youtubeVideoId"],
+        totalLength: json["totalLength"] != null ? json["totalLength"] : null,
+        youtubeVideoId: json["youtubeVideoId"] != null ? json["youtubeVideoId"] : null,
         showType: json["showType"],
         nsfw: json["nsfw"],
       );
@@ -190,7 +191,7 @@ class Attributes {
         "startDate":
             "${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}",
         "endDate":
-            "${endDate.year.toString().padLeft(4, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}",
+            "${endDate?.year.toString().padLeft(4, '0')}-${endDate?.month.toString().padLeft(2, '0')}-${endDate?.day.toString().padLeft(2, '0')}",
         "nextRelease": nextRelease,
         "popularityRank": popularityRank,
         "ratingRank": ratingRank,
@@ -199,7 +200,7 @@ class Attributes {
         "subtype": subtype,
         "status": status,
         "tba": tba,
-        "posterImage": posterImage.toJson(),
+        "posterImage": posterImage?.toJson(),
         "coverImage": coverImage?.toJson(),
         "episodeCount": episodeCount,
         "episodeLength": episodeLength,
@@ -287,8 +288,8 @@ class Dimensions {
 }
 
 class Large {
-  int width;
-  int height;
+  int? width;
+  int? height;
 
   Large({
     required this.width,
@@ -296,8 +297,8 @@ class Large {
   });
 
   factory Large.fromJson(Map<String, dynamic> json) => Large(
-        width: json["width"],
-        height: json["height"],
+        width: json["width"] != null ? json["width"] : null,
+        height: json["height"] != null ? json["height"] : null,
       );
 
   Map<String, dynamic> toJson() => {

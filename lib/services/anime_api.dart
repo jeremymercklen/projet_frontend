@@ -1,4 +1,5 @@
 import 'package:projet_frontend/models/anime.dart';
+import 'package:projet_frontend/models/genre.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -18,8 +19,7 @@ class AnimeAPI {
     List<Datum> animes = [];
     var result = await http.get(Uri.https(apiServer, searchRoute, {
       'filter[categories]': category,
-      'page[limit]': '5',
-      'page[offset]': '20'
+      'page[limit]': '10',
     }));
     if (result.statusCode == 200) {
       final Map<String, dynamic> datas = await jsonDecode(result.body);
@@ -28,6 +28,22 @@ class AnimeAPI {
         animes.add(anime);
       }
       return animes;
+    }
+    throw StatusErrorException(result.statusCode);
+  }
+
+  Future<List<DatumGenre>> getGenres(idAPI) async {
+    List<DatumGenre> genres = [];
+    var idAPIString = idAPI.toString();
+    var _searchRoute = '$searchRoute/$idAPIString/genres';
+    var result = await http.get(Uri.https(apiServer, _searchRoute));
+    if (result.statusCode == 200) {
+      final Map<String, dynamic> datas = await jsonDecode(result.body);
+      for (var data in datas['data']) {
+        DatumGenre genre = DatumGenre.fromJson(data);
+        genres.add(genre);
+      }
+      return genres;
     }
     throw StatusErrorException(result.statusCode);
   }
