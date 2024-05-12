@@ -141,9 +141,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ]);
               }
               if (snapshot.hasError) {
-                /*Provider.of<LoginState>(context, listen: false).disconnect();
+                Provider.of<LoginState>(context, listen: false).disconnect();
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginPage()));*/
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               }
               return Center(child: CircularProgressIndicator());
             }));
