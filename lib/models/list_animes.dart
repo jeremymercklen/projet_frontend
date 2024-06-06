@@ -1,33 +1,30 @@
 enum AnimeState { notSeen, planToWatch, watching, finished }
 
 class ListAnimes {
-  late var idAPI;
+  late var idAnime;
   late var state;
   late var rating;
   late var numberOfEpisodesSeen;
   late var isFavorite;
-  late var userId;
 
-  ListAnimes(this.idAPI, this.state, this.rating, this.numberOfEpisodesSeen,
-      this.isFavorite, this.userId);
+  ListAnimes(this.idAnime, this.state, this.rating, this.numberOfEpisodesSeen,
+      this.isFavorite);
 
   ListAnimes.fromMap(Map<String, dynamic> map) {
-    idAPI = map['idAPI'];
+    idAnime = map['idanime'];
     state = map['state'];
     rating = map['rating'];
-    numberOfEpisodesSeen = map['numberOfEpisodesSeen'];
-    isFavorite = map['isFavorite'];
-    userId = map['userId'];
+    numberOfEpisodesSeen = map['numberofepisodesseen'];
+    isFavorite = map['isfavorite'];
   }
 
-  toMap() {
+  toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['idAPI'] = this.idAPI;
+    data['idAnime'] = this.idAnime;
     data['state'] = this.state;
     data['rating'] = this.rating;
     data['numberOfEpisodesSeen'] = this.numberOfEpisodesSeen;
     data['isFavorite'] = this.isFavorite;
-    data['userId'] = this.userId;
     return data;
   }
 }

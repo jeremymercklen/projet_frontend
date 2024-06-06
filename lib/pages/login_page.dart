@@ -35,7 +35,7 @@ class _LoginPage extends State<LoginPage> {
       Provider.of<LoginState>(context, listen: false).token = authResult.token;
       Provider.of<LoginState>(context, listen: false).user =
           UserAccount(login: authResult.login);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
+      Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const MyApp()));
       return authResult;
     });

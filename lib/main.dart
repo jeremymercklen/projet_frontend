@@ -41,7 +41,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
   var animeAPI = AnimeAPI();
-  final animeRoutes = AnimeRoutes();
+  final animeRoutes = AnimeListRoutes();
   final userRoutes = UserAccountRoutes();
 
   @override
@@ -50,19 +50,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<Map<String, String>> _response;
-  late Future<List<Datum>> _anime;
+  late Future<List<Anime>> _anime;
 
   @override
   Widget build(BuildContext context) {
     _response = widget.userRoutes.refreshToken(context);
-    _anime = widget.animeAPI.animes('action');
+    _anime = widget.animeAPI.animes('Shounen', context);
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme
-              .of(context)
-              .colorScheme
-              .inversePrimary,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
         drawer: const MyDrawer(),
@@ -70,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
             future: _response,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                Provider.of<LoginState>(context, listen: false).token = snapshot.data!['token']!;
+                Provider.of<LoginState>(context, listen: false).token =
+                    snapshot.data!['token']!;
                 return Column(children: [
                   Align(
                       alignment: Alignment.topLeft, child: MyText('Action :')),
@@ -91,48 +89,40 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PageAnime(
-                                                            anime: data
-                                                                .elementAt(
-                                                                index))));
+                                                            anime:
+                                                                data.elementAt(
+                                                                    index))));
                                           },
                                           child: Card(
                                               child: Column(
-                                                children: [
-                                                  (data
-                                                      .elementAt(index)
-                                                      .attributes
-                                                      .posterImage !=
-                                                      null
-                                                      ? MyPadding(
-                                                      child: Image.network(
-                                                          data
-                                                              .elementAt(index)
-                                                              .attributes
-                                                              .posterImage!
-                                                              .tiny,
-                                                          loadingBuilder:
-                                                              (
-                                                              BuildContext context,
-                                                              Widget child,
-                                                              ImageChunkEvent?
-                                                              loadingProgress) {
-                                                            if (loadingProgress ==
-                                                                null) {
-                                                              return child;
-                                                            }
-                                                            return Center(
-                                                                child:
-                                                                CircularProgressIndicator());
-                                                          }))
-                                                      : Container()),
-                                                  MyPadding(
-                                                      child: MyText(data
+                                            children: [
+                                              (MyPadding(
+                                                  child: Image(
+                                                      image: NetworkImage(data
                                                           .elementAt(index)
-                                                          .attributes
-                                                          .titles
-                                                          .enJp))
-                                                ],
-                                              ))));
+                                                          .info
+                                                          .picture),
+                                                      height: 150,
+                                                      loadingBuilder: (BuildContext
+                                                              context,
+                                                          Widget child,
+                                                          ImageChunkEvent?
+                                                              loadingProgress) {
+                                                        if (loadingProgress ==
+                                                            null) {
+                                                          return child;
+                                                        }
+                                                        return Center(
+                                                            child:
+                                                                CircularProgressIndicator());
+                                                      }))),
+                                              MyPadding(
+                                                  child: MyText(data
+                                                      .elementAt(index)
+                                                      .info
+                                                      .name))
+                                            ],
+                                          ))));
                             } else if (snapshot.hasError) {
                               return Text(snapshot.error.toString());
                             }

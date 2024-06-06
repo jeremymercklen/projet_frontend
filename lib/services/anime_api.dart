@@ -1,7 +1,8 @@
 import 'package:projet_frontend/models/anime.dart';
-import 'package:projet_frontend/models/genre.dart';
+import 'package:projet_frontend/services/login_state.dart';
 
 import 'dart:convert';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class StatusErrorException {
@@ -11,39 +12,23 @@ class StatusErrorException {
 }
 
 class AnimeAPI {
-  static const apiServer = 'kitsu.io';
-  static const apiUrl = '/api/edge';
+  static const apiServer = '192.168.2.109:3333';
+  static const apiUrl = '';
   static const searchRoute = '$apiUrl/anime';
 
-  Future<List<Datum>> animes(category) async {
-    List<Datum> animes = [];
-    var result = await http.get(Uri.https(apiServer, searchRoute, {
-      'filter[categories]': category,
-      'page[limit]': '10',
-    }));
+  Future<List<Anime>> animes(category, context) async {
+    List<Anime> animes = [];
+    var token = Provider.of<LoginState>(context, listen: false).token;
+    var result = await http.get(Uri.http(apiServer, searchRoute, {
+      'genre': category,
+    }), headers: {'Authorization': 'Bearer $token'});
     if (result.statusCode == 200) {
       final Map<String, dynamic> datas = await jsonDecode(result.body);
-      for (var data in datas['data']) {
-        Datum anime = Datum.fromJson(data);
+      for (var data in datas['infos']) {
+        Anime anime = Anime.fromJson(data);
         animes.add(anime);
       }
       return animes;
-    }
-    throw StatusErrorException(result.statusCode);
-  }
-
-  Future<List<DatumGenre>> getGenres(idAPI) async {
-    List<DatumGenre> genres = [];
-    var idAPIString = idAPI.toString();
-    var _searchRoute = '$searchRoute/$idAPIString/genres';
-    var result = await http.get(Uri.https(apiServer, _searchRoute));
-    if (result.statusCode == 200) {
-      final Map<String, dynamic> datas = await jsonDecode(result.body);
-      for (var data in datas['data']) {
-        DatumGenre genre = DatumGenre.fromJson(data);
-        genres.add(genre);
-      }
-      return genres;
     }
     throw StatusErrorException(result.statusCode);
   }
