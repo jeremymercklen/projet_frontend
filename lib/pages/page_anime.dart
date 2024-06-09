@@ -35,39 +35,21 @@ class _PageAnime extends State<PageAnime> {
   final TextEditingController _controller = TextEditingController();
   bool canEditNbOfEpisodesSeen = true;
 
-  _onChange (text) {
+  _onChange(text) {
     if (text == "" || int.parse(text) < 0) {
-      text = "0"
-          .toString();
-      _controller.value =
-          _controller.value.copyWith(
-              text: text,
-              selection:
-              TextSelection.collapsed(
-                  offset:
-                  text.length));
-    }
-    else if(int.parse(text) > widget.anime.info.numberofepisodes) {
-      text = widget
-          .anime.info.numberofepisodes
-          .toString();
-      _controller.value =
-          _controller.value.copyWith(
-              text: text,
-              selection:
-              TextSelection.collapsed(
-                  offset:
-                  text.length));
+      text = "0".toString();
+      _controller.value = _controller.value.copyWith(
+          text: text, selection: TextSelection.collapsed(offset: text.length));
+    } else if (int.parse(text) > widget.anime.info.numberofepisodes) {
+      text = widget.anime.info.numberofepisodes.toString();
+      _controller.value = _controller.value.copyWith(
+          text: text, selection: TextSelection.collapsed(offset: text.length));
     }
     text = (int.parse(text)).toString();
-    _controller.value =
-        _controller.value.copyWith(
-            text: text,
-            selection:
-            TextSelection.collapsed(
-                offset:
-                text.length));
-    widget.animeListRoutes.changeNbOfEpisodesSeen(context, widget.anime.info.id, int.parse(text));
+    _controller.value = _controller.value.copyWith(
+        text: text, selection: TextSelection.collapsed(offset: text.length));
+    widget.animeListRoutes
+        .changeNbOfEpisodesSeen(context, widget.anime.info.id, int.parse(text));
   }
 
   @override
@@ -85,9 +67,8 @@ class _PageAnime extends State<PageAnime> {
             String dropdownValue = list.elementAt(listAnimes.state);
             List<String> genreNames = [];
             if (listAnimes.state == 2) {
-                canEditNbOfEpisodesSeen = false;
-            }
-            else {
+              canEditNbOfEpisodesSeen = false;
+            } else {
               canEditNbOfEpisodesSeen = true;
             }
             //setState(() {});
@@ -133,73 +114,71 @@ class _PageAnime extends State<PageAnime> {
                                   child: DropdownMenu<String>(
                                       initialSelection: dropdownValue,
                                       onSelected: (String? value) async {
-                                          switch (value) {
-                                            case 'Not seen':
-                                              canEditNbOfEpisodesSeen = true;
-                                              await widget.animeListRoutes.delete(
-                                                  context,
-                                                  widget.anime.info.id);
-                                              var updatedText = "0";
-                                              _controller.value =
-                                                  _controller.value.copyWith(
-                                                text: updatedText,
-                                                selection:
-                                                    TextSelection.collapsed(
-                                                        offset:
-                                                            updatedText.length),
-                                              );
-                                            case 'Plan to watch':
-                                              canEditNbOfEpisodesSeen = true;
-                                              await widget.animeListRoutes.insert(
-                                                  context: context,
-                                                  state: 1,
-                                                  idAnime:
-                                                  widget.anime.info.id);
-                                              var updatedText = "0";
-                                              _controller.value =
-                                                  _controller.value.copyWith(
-                                                    text: updatedText,
-                                                    selection:
-                                                    TextSelection.collapsed(
-                                                        offset:
-                                                        updatedText.length),
-                                                  );
-                                            case 'Watching':
-                                              canEditNbOfEpisodesSeen = false;
-                                              await widget.animeListRoutes.insert(
-                                                  context: context,
-                                                  state: 2,
-                                                  idAnime:
-                                                      widget.anime.info.id);
-                                              var updatedText = "0";
-                                              _controller.value =
-                                                  _controller.value.copyWith(
-                                                text: updatedText,
-                                                selection:
-                                                    TextSelection.collapsed(
-                                                        offset:
-                                                            updatedText.length),
-                                              );
-                                            case 'Finished':
-                                              canEditNbOfEpisodesSeen = true;
-                                              await widget.animeListRoutes.insert(
-                                                  context: context,
-                                                  state: 3,
-                                                  idAnime: widget.anime.info.id,
-                                                  nbOfEpisodesSeen: widget.anime
-                                                      .info.numberofepisodes);
-                                              var updatedText = widget
-                                                  .anime.info.numberofepisodes
-                                                  .toString();
-                                              _controller.value =
-                                                  _controller.value.copyWith(
-                                                text: updatedText,
-                                                selection:
-                                                    TextSelection.collapsed(
-                                                        offset:
-                                                            updatedText.length),
-                                              );
-                                        };
+                                        switch (value) {
+                                          case 'Not seen':
+                                            canEditNbOfEpisodesSeen = true;
+                                            await widget.animeListRoutes.delete(
+                                                context, widget.anime.info.id);
+                                            var updatedText = "0";
+                                            _controller.value =
+                                                _controller.value.copyWith(
+                                              text: updatedText,
+                                              selection:
+                                                  TextSelection.collapsed(
+                                                      offset:
+                                                          updatedText.length),
+                                            );
+                                          case 'Plan to watch':
+                                            canEditNbOfEpisodesSeen = true;
+                                            await widget.animeListRoutes.insert(
+                                                context: context,
+                                                state: 1,
+                                                idAnime: widget.anime.info.id);
+                                            var updatedText = "0";
+                                            _controller.value =
+                                                _controller.value.copyWith(
+                                              text: updatedText,
+                                              selection:
+                                                  TextSelection.collapsed(
+                                                      offset:
+                                                          updatedText.length),
+                                            );
+                                          case 'Watching':
+                                            canEditNbOfEpisodesSeen = false;
+                                            await widget.animeListRoutes.insert(
+                                                context: context,
+                                                state: 2,
+                                                idAnime: widget.anime.info.id);
+                                            var updatedText = "0";
+                                            _controller.value =
+                                                _controller.value.copyWith(
+                                              text: updatedText,
+                                              selection:
+                                                  TextSelection.collapsed(
+                                                      offset:
+                                                          updatedText.length),
+                                            );
+                                          case 'Finished':
+                                            canEditNbOfEpisodesSeen = true;
+                                            await widget.animeListRoutes.insert(
+                                                context: context,
+                                                state: 3,
+                                                idAnime: widget.anime.info.id,
+                                                nbOfEpisodesSeen: widget.anime
+                                                    .info.numberofepisodes);
+                                            var updatedText = widget
+                                                .anime.info.numberofepisodes
+                                                .toString();
+                                            _controller.value =
+                                                _controller.value.copyWith(
+                                              text: updatedText,
+                                              selection:
+                                                  TextSelection.collapsed(
+                                                      offset:
+                                                          updatedText.length),
+                                            );
+                                        }
+                                        ;
                                         setState(() {});
                                       },
                                       dropdownMenuEntries: list
@@ -209,16 +188,6 @@ class _PageAnime extends State<PageAnime> {
                                             value: value, label: value);
                                       }).toList())),
                             ),
-                            //Row(children: [
-                            /*TextField(
-                                        controller: _controller,
-                                        decoration: InputDecoration(labelText: "Number of episodes seen"),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ]),
-                                    //Text('/' + widget.anime.info.numberofepisodes.toString())
-                                  //]),*/
                             Align(
                                 alignment: Alignment.topLeft,
                                 child: MyPadding(
@@ -241,7 +210,8 @@ class _PageAnime extends State<PageAnime> {
                                                 Container(
                                                     width: 50,
                                                     child: TextFormField(
-                                                        readOnly: canEditNbOfEpisodesSeen,
+                                                        readOnly:
+                                                            canEditNbOfEpisodesSeen,
                                                         controller: _controller,
                                                         keyboardType:
                                                             TextInputType
@@ -250,71 +220,104 @@ class _PageAnime extends State<PageAnime> {
                                                           FilteringTextInputFormatter
                                                               .digitsOnly
                                                         ],
-                                                    onChanged:(text) {
+                                                        onChanged: (text) {
                                                           _onChange(text);
-                                                    })),
+                                                        })),
                                                 Text(
                                                     "/${widget.anime.info.numberofepisodes.toString()}"),
                                                 SizedBox(
                                                     height:
                                                         50, //height of button
-                                                    width:
-                                                        50, //width of button
-                                                    child: IconButton(
-                                                        onPressed: () {
-                                                          var updatedText = ((int.parse(_controller.text)) + 1).toString();
-                                                          if (int.parse(updatedText) <= widget.anime.info.numberofepisodes) {
-                                                            _controller.value =
-                                                                _controller
+                                                    width: 50, //width of button
+                                                    child: listAnimes.state == 2
+                                                        ? IconButton(
+                                                            onPressed: () {
+                                                              var updatedText =
+                                                                  ((int.parse(_controller
+                                                                              .text)) +
+                                                                          1)
+                                                                      .toString();
+                                                              if (int.parse(
+                                                                      updatedText) <=
+                                                                  widget
+                                                                      .anime
+                                                                      .info
+                                                                      .numberofepisodes) {
+                                                                _controller.value = _controller
                                                                     .value
                                                                     .copyWith(
-                                                                    text: updatedText,
-                                                                    selection:
-                                                                    TextSelection
-                                                                        .collapsed(
-                                                                        offset:
-                                                                        updatedText
-                                                                            .length));
-                                                            _onChange(_controller.text);
-                                                          }
-                                                        },
-                                                        style: ButtonStyle(
-                                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(0)
-                                                        ))),
-                                                        icon: Icon(Icons.add))),
+                                                                        text:
+                                                                            updatedText,
+                                                                        selection:
+                                                                            TextSelection.collapsed(offset: updatedText.length));
+                                                                _onChange(
+                                                                    _controller
+                                                                        .text);
+                                                              }
+                                                            },
+                                                            style: ButtonStyle(
+                                                                padding: MaterialStateProperty.all(
+                                                                    EdgeInsets
+                                                                        .zero),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            0)))),
+                                                            icon:
+                                                                Icon(Icons.add))
+                                                        : IconButton(
+                                                            onPressed: null,
+                                                            style: ButtonStyle(
+                                                                padding:
+                                                                    MaterialStateProperty.all(
+                                                                        EdgeInsets.zero),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)))),
+                                                            icon: Icon(Icons.add))),
                                                 SizedBox(
                                                     height:
-                                                    50, //height of button
-                                                    width:
-                                                    50, //width of button
-                                                    child: IconButton(
-                                                        onPressed: () {
-                                                          var updatedText = ((int.parse(_controller.text)) - 1).toString();
-                                                          if (int.parse(updatedText) >= 0) {
-                                                            _controller.value =
-                                                                _controller
+                                                        50, //height of button
+                                                    width: 50, //width of button
+                                                    child: listAnimes.state == 2
+                                                        ? IconButton(
+                                                            onPressed: () {
+                                                              var updatedText =
+                                                                  ((int.parse(_controller
+                                                                              .text)) -
+                                                                          1)
+                                                                      .toString();
+                                                              if (int.parse(
+                                                                      updatedText) >=
+                                                                  0) {
+                                                                _controller.value = _controller
                                                                     .value
                                                                     .copyWith(
-                                                                    text: updatedText,
-                                                                    selection:
-                                                                    TextSelection
-                                                                        .collapsed(
-                                                                        offset:
-                                                                        updatedText
-                                                                            .length));
-                                                            _onChange(_controller.text);
-                                                          }
-                                                        },
-                                                        style: ButtonStyle(
-                                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(0)
-                                                                ))),
-                                                        icon: Icon(Icons.remove))),
+                                                                        text:
+                                                                            updatedText,
+                                                                        selection:
+                                                                            TextSelection.collapsed(offset: updatedText.length));
+                                                                _onChange(
+                                                                    _controller
+                                                                        .text);
+                                                              }
+                                                            },
+                                                            style: ButtonStyle(
+                                                                padding: MaterialStateProperty.all(
+                                                                    EdgeInsets
+                                                                        .zero),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            0)))),
+                                                            icon: Icon(
+                                                                Icons.remove))
+                                                        : IconButton(
+                                                            onPressed: null,
+                                                            style: ButtonStyle(
+                                                                padding:
+                                                                    MaterialStateProperty.all(
+                                                                        EdgeInsets.zero),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)))),
+                                                            icon: Icon(Icons.remove))),
                                               ])
                                         ])))),
                             Align(

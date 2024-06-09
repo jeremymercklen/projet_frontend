@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../main.dart';
 import '../pages/login_page.dart';
+import '../pages/anime_list_page.dart';
 import '../services/login_state.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -21,6 +22,12 @@ class MyDrawer extends StatelessWidget {
         onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const MyApp())),
       ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text("My list"),
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => PageListAnime())),
+          ),
       ListTile(
         leading: const Icon(Icons.logout),
         title: const Text("Log out"),
