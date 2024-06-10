@@ -127,7 +127,7 @@ class AnimeListRoutes extends AnimeListAPI {
     var result = await http.get(Uri.https(AnimeListAPI.apiServer, '$animeRoutes/${idAnime.toString()}'),
         headers: {'Authorization': 'Bearer $token'});
     if (result.statusCode == 404) {
-      var anime = ListAnimes(idAnime, state, 0, nbOfEpisodesSeen, false);
+      var anime = ListAnimes(idAnime, state, 11, nbOfEpisodesSeen, false);
       result = await http.post(Uri.https(AnimeListAPI.apiServer, '$animeRoutes'),
           headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
           body: jsonEncode(anime));
@@ -148,7 +148,7 @@ class AnimeListRoutes extends AnimeListAPI {
         .token;
     await http.patch(Uri.https(AnimeListAPI.apiServer, '$animeRoutes/$idAnime'),
         headers: {'Authorization': 'Bearer $token'},
-        body: {'isFavorite': isFavorite});
+        body: {'isFavorite': isFavorite.toString()});
   }
 
   Future changeNbOfEpisodesSeen(context, int idAnime, int nbOfEpisodesSeen) async {
@@ -166,7 +166,7 @@ class AnimeListRoutes extends AnimeListAPI {
         .token;
     await http.patch(Uri.https(AnimeListAPI.apiServer, '$animeRoutes/$idAnime'),
         headers: {'Authorization': 'Bearer $token'},
-        body: {'rating': rating});
+        body: {'rating': rating.toString()});
   }
 
   Future delete(context, int idAnime) async {

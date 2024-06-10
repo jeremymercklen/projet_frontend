@@ -79,9 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _controllerFourthGenre.addListener(_onScrollFourthGenre);
     super.initState();
   }
+
   _onScrollFirstGenre() {
     if (_controllerFirstGenre.offset >=
-        _controllerFirstGenre.position.maxScrollExtent &&
+            _controllerFirstGenre.position.maxScrollExtent &&
         !_controllerFirstGenre.position.outOfRange) {
       setState(() {
         _isLoadingFirstGenre = true;
@@ -89,9 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchData(_firstGenreShorten, firstGenre, _isLoadingFirstGenre);
     }
   }
+
   _onScrollSecondGenre() {
     if (_controllerSecondGenre.offset >=
-        _controllerSecondGenre.position.maxScrollExtent &&
+            _controllerSecondGenre.position.maxScrollExtent &&
         !_controllerSecondGenre.position.outOfRange) {
       setState(() {
         _isLoadingSecondGenre = true;
@@ -99,9 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchData(_secondGenreShorten, secondGenre, _isLoadingSecondGenre);
     }
   }
+
   _onScrollThirdGenre() {
     if (_controllerThirdGenre.offset >=
-        _controllerThirdGenre.position.maxScrollExtent &&
+            _controllerThirdGenre.position.maxScrollExtent &&
         !_controllerThirdGenre.position.outOfRange) {
       setState(() {
         _isLoadingThirdGenre = true;
@@ -109,9 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchData(_thirdGenreShorten, thirdGenre, _isLoadingThirdGenre);
     }
   }
+
   _onScrollFourthGenre() {
     if (_controllerFourthGenre.offset >=
-        _controllerFourthGenre.position.maxScrollExtent &&
+            _controllerFourthGenre.position.maxScrollExtent &&
         !_controllerFourthGenre.position.outOfRange) {
       setState(() {
         _isLoadingFourthGenre = true;
@@ -119,6 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchData(_fourthGenreShorten, fourthGenre, _isLoadingFourthGenre);
     }
   }
+
   _fetchData(genreListShorten, genreList, isLoading) {
     int lastIndex = genreListShorten.length;
     setState(() {
@@ -222,9 +227,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                           onTap: () {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PageAnime(
-                                                            anime: _firstGenreShorten
+                                                    builder: (context) => PageAnime(
+                                                        anime:
+                                                            _firstGenreShorten
                                                                 .elementAt(
                                                                     index))));
                                           },
@@ -253,34 +258,35 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                 CircularProgressIndicator());
                                                       }))),
                                               MyPadding(
-                                                  child: MyText(_firstGenreShorten
-                                                      .elementAt(index)
-                                                      .info
-                                                      .name))
+                                                  child: MyText(
+                                                      _firstGenreShorten
+                                                          .elementAt(index)
+                                                          .info
+                                                          .name))
                                             ],
                                           ))))),
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: MyText('Shoujo :')),
-                      SizedBox(
-                          height: 220,
-                          child: ListView.builder(
-                            controller: _controllerSecondGenre,
-                              itemCount: _secondGenreShorten.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) =>
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PageAnime(
-                                                        anime: _secondGenreShorten
-                                                            .elementAt(
-                                                            index))));
-                                      },
-                                      child: Card(
-                                          child: Column(
+                          Align(
+                              alignment: Alignment.topLeft,
+                              child: MyText('Shoujo :')),
+                          SizedBox(
+                              height: 220,
+                              child: ListView.builder(
+                                  controller: _controllerSecondGenre,
+                                  itemCount: _secondGenreShorten.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) => PageAnime(
+                                                        anime:
+                                                            _secondGenreShorten
+                                                                .elementAt(
+                                                                    index))));
+                                          },
+                                          child: Card(
+                                              child: Column(
                                             children: [
                                               (MyPadding(
                                                   child: Image(
@@ -291,47 +297,48 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               .picture),
                                                       height: 150,
                                                       loadingBuilder: (BuildContext
-                                                      context,
+                                                              context,
                                                           Widget child,
                                                           ImageChunkEvent?
-                                                          loadingProgress) {
+                                                              loadingProgress) {
                                                         if (loadingProgress ==
                                                             null) {
                                                           return child;
                                                         }
                                                         return Center(
                                                             child:
-                                                            CircularProgressIndicator());
+                                                                CircularProgressIndicator());
                                                       }))),
                                               MyPadding(
-                                                  child: MyText(_secondGenreShorten
-                                                      .elementAt(index)
-                                                      .info
-                                                      .name))
+                                                  child: MyText(
+                                                      _secondGenreShorten
+                                                          .elementAt(index)
+                                                          .info
+                                                          .name))
                                             ],
                                           ))))),
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: MyText('Seinen :')),
-                      SizedBox(
-                          height: 220,
-                          child: ListView.builder(
-                            controller: _controllerThirdGenre,
-                              itemCount: _thirdGenreShorten.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) =>
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PageAnime(
-                                                        anime: _thirdGenreShorten
-                                                            .elementAt(
-                                                            index))));
-                                      },
-                                      child: Card(
-                                          child: Column(
+                          Align(
+                              alignment: Alignment.topLeft,
+                              child: MyText('Seinen :')),
+                          SizedBox(
+                              height: 220,
+                              child: ListView.builder(
+                                  controller: _controllerThirdGenre,
+                                  itemCount: _thirdGenreShorten.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) => PageAnime(
+                                                        anime:
+                                                            _thirdGenreShorten
+                                                                .elementAt(
+                                                                    index))));
+                                          },
+                                          child: Card(
+                                              child: Column(
                                             children: [
                                               (MyPadding(
                                                   child: Image(
@@ -342,47 +349,48 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               .picture),
                                                       height: 150,
                                                       loadingBuilder: (BuildContext
-                                                      context,
+                                                              context,
                                                           Widget child,
                                                           ImageChunkEvent?
-                                                          loadingProgress) {
+                                                              loadingProgress) {
                                                         if (loadingProgress ==
                                                             null) {
                                                           return child;
                                                         }
                                                         return Center(
                                                             child:
-                                                            CircularProgressIndicator());
+                                                                CircularProgressIndicator());
                                                       }))),
                                               MyPadding(
-                                                  child: MyText(_thirdGenreShorten
-                                                      .elementAt(index)
-                                                      .info
-                                                      .name))
+                                                  child: MyText(
+                                                      _thirdGenreShorten
+                                                          .elementAt(index)
+                                                          .info
+                                                          .name))
                                             ],
                                           ))))),
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: MyText('Josei :')),
-                      SizedBox(
-                          height: 220,
-                          child: ListView.builder(
-                            controller: _controllerFourthGenre,
-                              itemCount: _fourthGenreShorten.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) =>
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PageAnime(
-                                                        anime: _fourthGenreShorten
-                                                            .elementAt(
-                                                            index))));
-                                      },
-                                      child: Card(
-                                          child: Column(
+                          Align(
+                              alignment: Alignment.topLeft,
+                              child: MyText('Josei :')),
+                          SizedBox(
+                              height: 220,
+                              child: ListView.builder(
+                                  controller: _controllerFourthGenre,
+                                  itemCount: _fourthGenreShorten.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) => PageAnime(
+                                                        anime:
+                                                            _fourthGenreShorten
+                                                                .elementAt(
+                                                                    index))));
+                                          },
+                                          child: Card(
+                                              child: Column(
                                             children: [
                                               (MyPadding(
                                                   child: Image(
@@ -393,31 +401,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               .picture),
                                                       height: 150,
                                                       loadingBuilder: (BuildContext
-                                                      context,
+                                                              context,
                                                           Widget child,
                                                           ImageChunkEvent?
-                                                          loadingProgress) {
+                                                              loadingProgress) {
                                                         if (loadingProgress ==
                                                             null) {
                                                           return child;
                                                         }
                                                         return Center(
                                                             child:
-                                                            CircularProgressIndicator());
+                                                                CircularProgressIndicator());
                                                       }))),
                                               MyPadding(
-                                                  child: MyText(_fourthGenreShorten
-                                                      .elementAt(index)
-                                                      .info
-                                                      .name))
+                                                  child: MyText(
+                                                      _fourthGenreShorten
+                                                          .elementAt(index)
+                                                          .info
+                                                          .name))
                                             ],
                                           )))))
                         ]));
               }
               if (snapshot.hasError) {
-                Provider.of<LoginState>(context, listen: false).disconnect();
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                Future.delayed(Duration.zero, () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                });
               }
               return Center(child: CircularProgressIndicator());
             }));

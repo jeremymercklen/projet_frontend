@@ -23,6 +23,14 @@ const List<String> state = <String>[
   'Finished'
 ];
 
+const List<String> filters = <String>[
+  'All',
+  'Favorite',
+  'Plan to watch',
+  'Watching',
+  'Finished'
+];
+
 class PageListAnime extends StatefulWidget {
   PageListAnime({super.key});
 
@@ -46,74 +54,92 @@ class _PageListAnime extends State<PageListAnime> {
 
     return Scaffold(
         appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-    ),
-    drawer: const MyDrawer(),
-    body: FutureBuilder(
-        future: Future.wait([_responseToken, _animeInList]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.hasData) {
-            var animeInList = snapshot.data?[1];
-            _animeList =
-                widget.animeAPI.animesByList(animeInList, context);
-            return FutureBuilder(
-                future: _animeList,
-                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                  if (snapshot.hasData) {
-                    var animeList = snapshot.data;
-                    return ListView.builder(
-                        itemCount: animeList?.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) => GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PageAnime(
-                                      anime: animeList?.elementAt(index))));
-                            },
-                            child: Card(
-                                child: Row(
-                              children: [
-                                (MyPadding(
-                                    child: Image(
-                                        image: NetworkImage(animeList
-                                            ?.elementAt(index)
-                                            .info
-                                            .picture),
-                                        height: 150,
-                                        loadingBuilder: (BuildContext context,
-                                            Widget child,
-                                            ImageChunkEvent? loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }))),
-                                    Expanded(child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Column(children: [
-                                MyText(animeList?.elementAt(index).info.name),
-                  MyPadding(child: MyText(state.elementAt(animeInList.elementAt(index).state)))
-                                ])))
-                              ],
-                            ))));
-                  } else if (snapshot.hasError) {
-                    Provider.of<LoginState>(context, listen: false)
-                        .disconnect();
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginPage()));
-                    return Center(child: CircularProgressIndicator());
-                  } else
-                    return Center(child: CircularProgressIndicator());
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        drawer: const MyDrawer(),
+        body: FutureBuilder(
+            future: Future.wait([_responseToken, _animeInList]),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+              if (snapshot.hasData) {
+                var animeInList = snapshot.data?[1];
+                _animeList = widget.animeAPI.animesByList(animeInList, context);
+                return FutureBuilder(
+                    future: _animeList,
+                    builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (snapshot.hasData) {
+                        var animeList = snapshot.data;
+                        return ListView.builder(
+                            itemCount: animeList?.length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (context, index) => GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => PageAnime(
+                                          anime: animeList?.elementAt(index))));
+                                },
+                                child: Card(
+                                    child: Row(
+                                  children: [
+                                    (MyPadding(
+                                        child: Image(
+                                            image: NetworkImage(animeList
+                                                ?.elementAt(index)
+                                                .info
+                                                .picture),
+                                            height: 150,
+                                            loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }))),
+                                    Expanded(
+                                        child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Column(children: [
+                                              MyText(animeList
+                                                  ?.elementAt(index)
+                                                  .info
+                                                  .name),
+                                              MyPadding(
+                                                  child: MyText(
+                                                      'State : ${state.elementAt(animeInList.elementAt(index).state)}')),
+                                              animeInList.elementAt(index).state == 3 ?
+                                              MyPadding(
+                                                  child: animeInList
+                                                              .elementAt(index)
+                                                              .rating <=
+                                                          10
+                                                      ? MyText(
+                                                          'My rating : ${animeInList.elementAt(index).rating}')
+                                                      : MyText(
+                                                          'My rating : not rated')) : Container(),
+                                            ])))
+                                  ],
+                                ))));
+                      } else if (snapshot.hasError) {
+                        Provider.of<LoginState>(context, listen: false)
+                            .disconnect();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => LoginPage()));
+                        return Center(child: CircularProgressIndicator());
+                      } else
+                        return Center(child: CircularProgressIndicator());
+                    });
+              } else if (snapshot.hasError) {
+                Future.delayed(Duration.zero, () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => LoginPage()));
                 });
-          } else if (snapshot.hasError) {
-            Provider.of<LoginState>(context, listen: false).disconnect();
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginPage()));
-            return Center(child: CircularProgressIndicator());
-          } else
-            return Center(child: CircularProgressIndicator());
-        }));
+                return Center(child: CircularProgressIndicator());
+              } else
+                return Center(child: CircularProgressIndicator());
+            }));
   }
 }
