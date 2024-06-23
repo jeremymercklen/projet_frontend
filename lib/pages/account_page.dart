@@ -63,65 +63,71 @@ class _PageListAnime extends State<PageAccount> {
                     builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
                       if (snapshot.hasData) {
                         _animeList = snapshot.data?[0];
-                        return MyPadding(child: Column(children: [
-                            Align(
-                            alignment: Alignment.topLeft,
-                            child: MyText("Number of episodes seen : $numberOfTotalEpisodesSeen")),
-                            Align(
-                                alignment: Alignment.topLeft,
-                                child: MyText("Number of anime finished : $numberOfAnimeSeen")),
-                            Align(
-                                alignment: Alignment.topLeft,
-                                child:MyText("Favorites :")),
-                          SizedBox(
-                            height: 230,
-                            child:ListView.builder(
-                                  itemCount: _animeList?.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) =>
-                                      GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PageAnime(
-                                                            anime: _animeList!
-                                                                .elementAt(
-                                                                index))));
-                                          },
-                                          child:
-                                          Card(
-                                              child: Column(
-                                                children: [
-                                                  (MyPadding(
-                                                      child: Image(
-                                                          image: NetworkImage(
-                                                              _animeList!
-                                                                  .elementAt(index)
-                                                                  .info
-                                                                  .picture),
-                                                          height: 150,
-                                                          loadingBuilder: (BuildContext
-                                                          context,
-                                                              Widget child,
-                                                              ImageChunkEvent?
-                                                              loadingProgress) {
-                                                            if (loadingProgress ==
-                                                                null) {
-                                                              return child;
-                                                            }
-                                                            return Center(
-                                                                child:
-                                                                CircularProgressIndicator());
-                                                          }))),
-                                                  MyPadding(
-                                                      child: MyText(
-                                                          _animeList!
-                                                              .elementAt(index)
-                                                              .info
-                                                              .name))
-                                                ],
-                                              )))))]));
+                        return ListView.builder(
+                            itemCount: 1,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (context, index) => MyPadding(
+                                    child: Column(children: [
+                                  Align(
+                                      alignment: Alignment.topLeft,
+                                      child: MyText(
+                                          "Number of episodes seen : $numberOfTotalEpisodesSeen")),
+                                  Align(
+                                      alignment: Alignment.topLeft,
+                                      child: MyText(
+                                          "Number of anime finished : $numberOfAnimeSeen")),
+                                  Align(
+                                      alignment: Alignment.topLeft,
+                                      child: MyText("Favorites :")),
+                                  SizedBox(
+                                      height: 210,
+                                      child: ListView.builder(
+                                          itemCount: _animeList?.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, index) =>
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) => PageAnime(
+                                                                anime: _animeList!
+                                                                    .elementAt(
+                                                                        index))));
+                                                  },
+                                                  child: Card(
+                                                      child: Column(
+                                                    children: [
+                                                      (MyPadding(
+                                                          child: Image(
+                                                              image: NetworkImage(
+                                                                  _animeList!
+                                                                      .elementAt(
+                                                                          index)
+                                                                      .info
+                                                                      .picture),
+                                                              height: 150,
+                                                              loadingBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Widget
+                                                                          child,
+                                                                      ImageChunkEvent?
+                                                                          loadingProgress) {
+                                                                if (loadingProgress ==
+                                                                    null) {
+                                                                  return child;
+                                                                }
+                                                                return Center(
+                                                                    child:
+                                                                        CircularProgressIndicator());
+                                                              }))),
+                                                      MyText(_animeList!
+                                                          .elementAt(index)
+                                                          .info
+                                                          .name)
+                                                    ],
+                                                  )))))
+                                ])));
                       } else if (snapshot.hasError) {
                         Future.delayed(Duration.zero, () {
                           Navigator.of(context).pushReplacement(
