@@ -8,6 +8,9 @@ import 'package:projet_frontend/models/list_animes.dart';
 import 'package:projet_frontend/services/anime_api.dart';
 import 'package:projet_frontend/services/list_anime_api.dart';
 import 'package:projet_frontend/pages/login_page.dart';
+import 'package:provider/provider.dart';
+
+import '../services/login_state.dart';
 
 const List<String> list = <String>[
   'Not seen',
@@ -59,8 +62,7 @@ class _PageAnime extends State<PageAnime> {
       _controllerRating.value = _controllerRating.value.copyWith(
           text: text, selection: TextSelection.collapsed(offset: text.length));
       text = "11";
-    }
-    else if (int.parse(text) < 0) {
+    } else if (int.parse(text) < 0) {
       text = "0";
       _controllerRating.value = _controllerRating.value.copyWith(
           text: text, selection: TextSelection.collapsed(offset: text.length));
@@ -109,7 +111,9 @@ class _PageAnime extends State<PageAnime> {
                   TextSelection.collapsed(offset: baseNbOfEpisodes.length),
             );
 
-            if (listAnimes.rating != null && listAnimes.rating >= 0 && listAnimes.rating < 10) {
+            if (listAnimes.rating != null &&
+                listAnimes.rating >= 0 &&
+                listAnimes.rating < 10) {
               var baseRating = listAnimes.rating.toString();
               _controllerRating.value = _controllerRating.value.copyWith(
                 text: baseRating,
@@ -399,7 +403,7 @@ class _PageAnime extends State<PageAnime> {
                                                             icon: Icon(Icons.remove))),
                                               ])
                                         ])))),
-                            Align(
+                            listAnimes.state == 3 ? Align(
                                 alignment: Alignment.topLeft,
                                 child: MyPadding(
                                     child: Container(
@@ -436,7 +440,7 @@ class _PageAnime extends State<PageAnime> {
                                                         })),
                                                 const Text("/10"),
                                               ])
-                                        ])))),
+                                        ])))) :Container() ,
                             Align(
                                 alignment: Alignment.topLeft,
                                 child: Text('Genres:\n$genreNames')),
@@ -445,6 +449,7 @@ class _PageAnime extends State<PageAnime> {
                         ]))));
           } else if (snapshot.hasError) {
             Future.delayed(Duration.zero, () {
+              Provider.of<LoginState>(context, listen: false).disconnect();
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => LoginPage()));
             });

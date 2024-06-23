@@ -213,6 +213,37 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: 1,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) => Column(children: [
+                          /*MyPadding(
+                              child: SearchAnchor(builder:
+                                  (BuildContext context,
+                                      SearchController controller) {
+                            return SearchBar(
+                                controller: controller,
+                                padding:
+                                    const MaterialStatePropertyAll<EdgeInsets>(
+                                        EdgeInsets.symmetric(horizontal: 16.0)),
+                                onTap: () {
+                                  controller.openView();
+                                },
+                                onChanged: (_) {
+                                  controller.openView();
+
+                                },
+                                leading: const Icon(Icons.search));
+                          }, suggestionsBuilder: (BuildContext context,
+                                  SearchController controller) async {
+                            return List<ListTile>.generate(5, (int index) {
+                              final String item = 'item $index';
+                              return ListTile(
+                                title: Text(item),
+                                onTap: () {
+                                  setState(() {
+                                    controller.closeView(item);
+                                  });
+                                },
+                              );
+                            });
+                          })),*/
                           Align(
                               alignment: Alignment.topLeft,
                               child: MyText('Shounen :')),
@@ -425,6 +456,7 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               if (snapshot.hasError) {
                 Future.delayed(Duration.zero, () {
+                  Provider.of<LoginState>(context, listen: false).disconnect();
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => LoginPage()));
                 });

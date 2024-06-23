@@ -4,7 +4,7 @@ class ListAnimes {
   late var idAnime;
   late var state;
   late var rating;
-  late var numberOfEpisodesSeen;
+  late int numberOfEpisodesSeen;
   late var isFavorite;
 
   ListAnimes(this.idAnime, this.state, this.rating, this.numberOfEpisodesSeen,

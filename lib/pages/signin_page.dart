@@ -28,8 +28,8 @@ class _SigninPageState extends State<SigninPage> {
     try {
       final exists = await widget.userRoutes.get(_login);
       if (exists) {
+        _loginError = 'Login already in use';
         setState(() {
-          _loginError = 'Login already in use';
         });
         return;
       }
@@ -57,45 +57,55 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text('Sign in'),
+          title: Text('Sign up'),
         ),
-        body: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                MySizedBox(
-                    child: TextFormField(
-                        onChanged: (value) => _login = value.toString(),
-                        decoration: InputDecoration(labelText: 'Login'),
-                        validator: (value) => stringNotEmptyValidator(
-                            value, 'Please enter a Login'))),
-                MySizedBox(
-                    child: TextFormField(
-                        decoration: InputDecoration(labelText: 'Password'),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        onChanged: (value) => _password = value.toString(),
-                        validator: (value) => stringNotEmptyValidator(
-                            value, 'Please enter a password'),
-                        obscureText: true)),
-                MySizedBox(
-                    child: TextFormField(
-                        decoration:
-                            InputDecoration(labelText: 'Repeat password'),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please repeat the password';
-                          }
-                          if (value != _password) {
-                            return 'The passwords does not matches';
-                          }
-                          return null;
-                        },
-                        obscureText: true)),
-                MySizedBox(
-                    child: MyElevatedButton(
-                        onPressed: () => _signin(), text: 'Sign in'))
-              ],
-            )));
+        body: ListView.builder(
+            itemCount: 1,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) => Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    MySizedBox(
+                        child: TextFormField(
+                            onChanged: (value) => _login = value.toString(),
+                            decoration: InputDecoration(labelText: 'Login'),
+                            validator: (value) {
+                              if (_loginError != null) {
+                                return _loginError;
+                              }
+                              return stringNotEmptyValidator(
+                                  value, 'Please enter a Login');
+                            },)),
+                    MySizedBox(
+                        child: TextFormField(
+                            decoration: InputDecoration(labelText: 'Password'),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            onChanged: (value) => _password = value.toString(),
+                            validator: (value) => stringNotEmptyValidator(
+                                value, 'Please enter a password'),
+                            obscureText: true)),
+                    MySizedBox(
+                        child: TextFormField(
+                            decoration:
+                                InputDecoration(labelText: 'Repeat password'),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please repeat the password';
+                              }
+                              if (value != _password) {
+                                return 'The passwords does not matches';
+                              }
+                              return null;
+                            },
+                            obscureText: true)),
+                    MyPadding(child: MySizedBox(
+                        child: MyElevatedButton(
+                            onPressed: () => _signin(), text: 'Sign up')))
+                  ],
+                ))));
   }
 }
