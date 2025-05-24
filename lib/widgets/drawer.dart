@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projet_frontend/consts.dart';
+import 'package:projet_frontend/pages/account_page.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
 import '../pages/login_page.dart';
+import '../pages/anime_list_page.dart';
 import '../services/login_state.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -18,8 +20,20 @@ class MyDrawer extends StatelessWidget {
       ListTile(
         leading: const Icon(Icons.home),
         title: const Text("List of anime"),
-        onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const MyApp())),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const MyApp())),
+      ),
+      ListTile(
+        leading: const Icon(Icons.list),
+        title: const Text("My list"),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => PageListAnime())),
+      ),
+      ListTile(
+        leading: const Icon(Icons.account_circle),
+        title: const Text("My account"),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => PageAccount())),
       ),
       ListTile(
         leading: const Icon(Icons.logout),

@@ -1,15 +1,14 @@
 import 'package:projet_frontend/components.dart';
-import 'package:projet_frontend/consts.dart';
 import 'package:projet_frontend/pages/login_page.dart';
 import 'package:projet_frontend/pages/page_anime.dart';
 import 'package:projet_frontend/services/anime_api.dart';
 import 'package:projet_frontend/services/list_anime_api.dart';
 import 'package:projet_frontend/services/login_state.dart';
 import 'package:projet_frontend/widgets/drawer.dart';
-import 'package:projet_frontend/models/list_animes.dart';
 import 'package:projet_frontend/models/anime.dart';
 
 import 'package:flutter/material.dart';
+import 'package:projet_frontend/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -41,7 +40,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
   var animeAPI = AnimeAPI();
-  final animeRoutes = AnimeRoutes();
+  final animeRoutes = AnimeListRoutes();
   final userRoutes = UserAccountRoutes();
 
   @override
@@ -50,102 +49,210 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<Map<String, String>> _response;
-  late Future<List<Datum>> _anime;
+  late Future<List<String>> _genres;
+  final ScrollController _scrollController = ScrollController();
+  Map<String, List<Anime>> _animesByGenre = {};
+  Map<String, bool> _isLoadingMore = {};
+  Map<String, int> _currentPage = {};
+  final int _itemsPerPage = 10;
+  bool _initialLoading = true;
+  Map<String, bool> _isRequestInProgress = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _response = widget.userRoutes.refreshToken(context);
+    _genres = widget.animeRoutes.getGenresByMostViewed(context);
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    try {
+      List<String> genres = await _genres;
+      for (String genre in genres) {
+        _animesByGenre[genre] = [];
+        _currentPage[genre] = 1;
+        _isLoadingMore[genre] = true;
+        _isRequestInProgress[genre] = false;
+        await _loadMoreAnimes(genre);
+      }
+      setState(() {
+        _initialLoading = false;
+      });
+    } catch (e) {
+      print('Error loading initial data: $e');
+    }
+  }
+
+  Future<void> _loadMoreAnimes(String genre) async {
+    if (_isRequestInProgress[genre] == true || _isLoadingMore[genre] != true) {
+      return;
+    }
+
+    _isRequestInProgress[genre] = true;
+
+    try {
+      List<Anime> newAnimes = await widget.animeAPI.animes(
+          genre,
+          context,
+          page: _currentPage[genre] ?? 1,
+          limit: _itemsPerPage
+      );
+
+      if (mounted) {
+        setState(() {
+          // Update the anime list
+          _animesByGenre[genre] = [..._animesByGenre[genre] ?? [], ...newAnimes];
+
+          // Always increment the page counter
+          _currentPage[genre] = (_currentPage[genre] ?? 1) + 1;
+
+          // Stop loading if we get fewer items than requested
+          _isLoadingMore[genre] = newAnimes.length >= _itemsPerPage;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingMore[genre] = false;
+        });
+      }
+      print('Error loading more animes: $e');
+    } finally {
+      _isRequestInProgress[genre] = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    _response = widget.userRoutes.refreshToken(context);
-    _anime = widget.animeAPI.animes('action');
-
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme
-              .of(context)
-              .colorScheme
-              .inversePrimary,
-          title: Text(widget.title),
-        ),
-        drawer: const MyDrawer(),
-        body: FutureBuilder(
-            future: _response,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Provider.of<LoginState>(context, listen: false).token = snapshot.data!['token']!;
-                return Column(children: [
-                  Align(
-                      alignment: Alignment.topLeft, child: MyText('Action :')),
-                  SizedBox(
-                      height: 220,
-                      child: FutureBuilder(
-                          future: _anime,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final data = snapshot.data;
-                              return ListView.builder(
-                                  itemCount: data!.length,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      drawer: const MyDrawer(),
+      body: Column(
+        children: [
+          MyPadding(
+            child: AnimeSearchBar(
+              searchAnimes: (query) =>
+                  widget.animeAPI.searchAnimes(query, context),
+            ),
+          ),
+          FutureBuilder(
+              future: Future.wait([_response, _genres]),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Provider.of<LoginState>(context, listen: false).token =
+                      (snapshot.data![0] as Map)["token"];
+                  List<String> genres = snapshot.data![1] as List<String>;
+
+                  if (_initialLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: genres.length,
+                      itemBuilder: (context, index) {
+                        String genre = genres[index];
+                        List<Anime> animes = _animesByGenre[genre] ?? [];
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            MyPadding(child: MyText(genre)),
+                            SizedBox(
+                              height: 220,
+                              child: NotificationListener<ScrollNotification>(
+                                onNotification:
+                                    (ScrollNotification scrollInfo) {
+                                  if (scrollInfo.metrics.pixels >=
+                                      scrollInfo.metrics.maxScrollExtent -
+                                          200) {
+                                    if (_isLoadingMore[genre] == true) {
+                                      _loadMoreAnimes(genre);
+                                    }
+                                  }
+                                  return true;
+                                },
+                                child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) =>
-                                      GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PageAnime(
-                                                            anime: data
-                                                                .elementAt(
-                                                                index))));
-                                          },
-                                          child: Card(
-                                              child: Column(
-                                                children: [
-                                                  (data
-                                                      .elementAt(index)
-                                                      .attributes
-                                                      .posterImage !=
-                                                      null
-                                                      ? MyPadding(
-                                                      child: Image.network(
-                                                          data
-                                                              .elementAt(index)
-                                                              .attributes
-                                                              .posterImage!
-                                                              .tiny,
-                                                          loadingBuilder:
-                                                              (
-                                                              BuildContext context,
-                                                              Widget child,
-                                                              ImageChunkEvent?
-                                                              loadingProgress) {
-                                                            if (loadingProgress ==
-                                                                null) {
-                                                              return child;
-                                                            }
-                                                            return Center(
-                                                                child:
-                                                                CircularProgressIndicator());
-                                                          }))
-                                                      : Container()),
-                                                  MyPadding(
-                                                      child: MyText(data
-                                                          .elementAt(index)
-                                                          .attributes
-                                                          .titles
-                                                          .enJp))
-                                                ],
-                                              ))));
-                            } else if (snapshot.hasError) {
-                              return Text(snapshot.error.toString());
-                            }
-                            return Container();
-                          }))
-                ]);
-              }
-              if (snapshot.hasError) {
-                Provider.of<LoginState>(context, listen: false).disconnect();
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              }
-              return Center(child: CircularProgressIndicator());
-            }));
+                                  itemCount: animes.length +
+                                      (_isLoadingMore[genre] == true ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index == animes.length) {
+                                      if (_isLoadingMore[genre] == true) {
+                                        return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) => PageAnime(
+                                                    anime: animes[index])));
+                                      },
+                                      child: Card(
+                                        child: Column(
+                                          children: [
+                                            MyPadding(
+                                              child: Image.network(
+                                                animes[index].info.picture,
+                                                height: 150,
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                },
+                                              ),
+                                            ),
+                                            MyPadding(
+                                                child: MyText(
+                                                    animes[index].info.name)),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  Future.delayed(Duration.zero, () {
+                    Provider.of<LoginState>(context, listen: false)
+                        .disconnect();
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  });
+                }
+                return const Center(child: CircularProgressIndicator());
+              }),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
